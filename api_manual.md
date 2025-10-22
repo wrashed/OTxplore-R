@@ -11,8 +11,8 @@ A separate test script (`scripts/test_api.R`) allows collaborators to **run mock
 
 | File | Purpose |
 |------|----------|
-| `R/get_data.R` | Core API module — fetches Open Targets data, handles pagination, builds visNetwork graph |
-| `test_api.R` | Test runner — executes mock or live data fetching and exports results |
+| `scripts/get_data.R` | Core API module — fetches Open Targets data, handles pagination, builds visNetwork graph |
+| `scripts/test_api.R` | Test runner — executes mock or live data fetching and exports results |
 
 ---
 
@@ -46,39 +46,39 @@ scripts/get_data.R
 scripts/test_api.R
 ```
 ### Option A - Run interactively in R or RStudio
-- Steps:
-  1. Open the project root in R or RStudio
-  2. Load the scripts:
-  ```r
-  source("scripts/get_data.R")
-  source("scripts/test_api.R")
-  ```
-  3. At the top of ```test_api.R```, choose between mock and live testing:
-  ```r
-  USE_MOCK <- TRUE   # Offline test using mock data
-  # or
-  USE_MOCK <- FALSE  # Live API query
-  ```
-  4. This script will:
-  - Fetch data (mock or live)
-  - Build a tidy graph
-  - Export results into test_exports/
-  - Show an interactive visNetwork plot
 
-  5. Expected output files
+1. Open the project root in R or RStudio
+2. Load the scripts:
+```r
+source("scripts/get_data.R")
+source("scripts/test_api.R")
+```
+3. At the top of ```test_api.R```, choose between mock and live testing:
+```r
+USE_MOCK <- TRUE   # Offline test using mock data
+# or
+USE_MOCK <- FALSE  # Live API query
+```
+4. This script will:
+- Fetch data (mock or live)
+- Build a tidy graph
+- Export results into test_exports/
+- Show an interactive visNetwork plot
 
-  ```pgsql
-  test_exports/
-  ├─ nodes.csv   # Graph nodes (id, label, group)
-  ├─ edges.csv   # Graph edges (from, to, type, title)
-  └─ res.rds     # Full R object: assoc_df, known_drugs_df, evidence_df, graph, meta
-  ```
-  6. To reload and visualiza later
-  ```r
-  res <- readRDS("test_exports/res.rds")
-  library(visNetwork)
-  visNetwork(res$graph$nodes, res$graph$edges)
-  ```
+5. Expected output files
+
+```pgsql
+test_exports/
+├─ nodes.csv   # Graph nodes (id, label, group)
+├─ edges.csv   # Graph edges (from, to, type, title)
+└─ res.rds     # Full R object: assoc_df, known_drugs_df, evidence_df, graph, meta
+```
+6. To reload and visualiza later
+```r
+res <- readRDS("test_exports/res.rds")
+library(visNetwork)
+visNetwork(res$graph$nodes, res$graph$edges)
+```
 
 ### Option B - Run from the Command Line
 Run the full script directly without opening RStudio:
