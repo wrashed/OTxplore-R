@@ -1,0 +1,18 @@
+name: otxplorer-r
+channels:
+  - conda-forge
+  - r
+dependencies:
+  - r-base=4.3       
+  - r-tidyverse         
+  - r-httr
+  - r-jsonlite
+  - r-visnetwork
+  - r-remotes           
+  - r-devtools          
+  - r-shiny             
+  - r-dplyr             
+  - r-tibble
+  - r-stringr
+  - r-purrr
+  - r-igraph
