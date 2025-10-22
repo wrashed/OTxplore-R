@@ -18,15 +18,52 @@ A separate test script (`scripts/test_api.R`) allows collaborators to **run mock
 
 ## Key Function
 
-### Output Structure from `fetch_ot_data()`
+### Using the `fetch_ot_data` function
+If you want to use the Open Targets API directly — for analysis, data integration, or custom visualization —  
+you can call the `fetch_ot_data()` function from the module `script/get_data.R`.
 
-Returns a list with:
+This function connects to the **Open Targets GraphQL API**, fetches all relevant target–disease–drug relationships, and returns a single structured list with data frames and a ready-to-plot network graph.
 
-- `assoc_df` — Target–disease associations  
-- `known_drugs_df` — Target–drug–disease relationships  
-- `evidence_df` — Evidence details (optional)  
-- `graph` — `list(nodes, edges)` formatted for `visNetwork()`  
-- `meta` — Metadata (gene/disease IDs, runtime, parameters)
+---
+
+#### Step 1 — Load the module
+```r
+source("scripts/get_data.R")
+```
+#### Step 2 - Run a live API query
+You can specify:
+- gene_id — Ensembl ID for your target gene
+- disease_efo_id (optional) — EFO ID for a disease
+- min_score — Minimum association score to include
+- evidence_types (optional) — Filter evidence by data source or data type
+```r
+res <- fetch_ot_data(
+  gene_id = "ENSG00000169083",          # Example: Androgen Receptor (AR)
+  disease_efo_id = "EFO_0000616",       # Example: Prostate Carcinoma
+  min_score = 0.2,                      # Filter low-confidence associations
+  evidence_types = c("genetic_association", "literature"),  # Optional
+  page_size = 200,
+  log = TRUE
+)
+```
+#### Step 3 - Explore the results
+`fetch_ot_data()` returns a structured list with the following elements:
+| Element | Type | Description |
+|------|----------|----------|
+| `assoc_df` | data.frame | Target-disease associations |
+| `known_drugs_df` | data.frame | Target-drug-disease relationships |
+| `evidence_df` | data.frame | Evidence for specific target–disease pairs |
+| `graph` | list | Contains `nodes` and `edges` ready for visNetwork |
+| `meta` | list | Metadata (parameters, timestamps, runtime) |
+
+Inspect the results in R:
+```r
+str(res$graph$nodes)
+str(res$graph$edges)
+head(res$assoc_df)
+head(res$known_drugs_df)
+head(res$evidence_df)
+```
 
 ## Running Tests
 
@@ -47,25 +84,25 @@ scripts/test_api.R
 ```
 ### Option A - Run interactively in R or RStudio
 
-1. Open the project root in R or RStudio
-2. Load the scripts:
+#### Step 1 — Open the project root in R or RStudio
+#### Step 2 — Load the scripts:
 ```r
 source("scripts/get_data.R")
 source("scripts/test_api.R")
 ```
-3. At the top of ```test_api.R```, choose between mock and live testing:
+#### Step 3 — At the top of ```test_api.R```, choose between mock and live testing:
 ```r
 USE_MOCK <- TRUE   # Offline test using mock data
 # or
 USE_MOCK <- FALSE  # Live API query
 ```
-4. This script will:
+#### Step 4 — This script will:
 - Fetch data (mock or live)
 - Build a tidy graph
 - Export results into test_exports/
 - Show an interactive visNetwork plot
 
-5. Expected output files
+#### Step 5 — Expected output files
 
 ```pgsql
 test_exports/
@@ -73,7 +110,7 @@ test_exports/
 ├─ edges.csv   # Graph edges (from, to, type, title)
 └─ res.rds     # Full R object: assoc_df, known_drugs_df, evidence_df, graph, meta
 ```
-6. To reload and visualiza later
+#### Step 6 — To reload and visualiza later
 ```r
 res <- readRDS("test_exports/res.rds")
 library(visNetwork)
